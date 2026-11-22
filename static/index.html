@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SonataRack — Polyphonic Synth &amp; Euclidean Rhythm Studio</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <div class="rack-outer">
+    <div class="rack-chassis">
+      <!-- TOP STUDIO TRANSPORT BAR -->
+      <header class="transport-bar">
+        <div class="brand-plate">
+          <div class="screw-badge mono" aria-hidden="true">SR</div>
+          <div>
+            <h1>SonataRack</h1>
+            <div class="brand-sub mono">POLYPHONIC FM + EUCLIDEAN DSP INSTRUMENT</div>
+          </div>
+        </div>
+
+        <div class="transport-controls">
+          <button id="play-btn" class="t-btn t-btn-play mono">▶ PLAY LOOP</button>
+          <select id="pattern-select" class="t-select" title="Factory & Saved Patterns"></select>
+          <select id="patch-select" class="t-select" title="Synth Patch Preset"></select>
+          <select id="scale-select" class="t-select" title="Scale Quantizer"></select>
+          <label class="mono" style="font-size:11px;font-weight:700;">BPM <input id="bpm-input" type="number" class="t-input mono" style="width:62px;" min="55" max="210" value="92" /></label>
+          <button id="save-patch-btn" class="t-btn">Save Patch</button>
+          <button id="export-wav-btn" class="t-btn t-btn-sage mono">↓ Export .WAV</button>
+          <button id="theme-btn" class="t-btn mono">Vinyl Mode</button>
+        </div>
+      </header>
+
+      <!-- ROW 1: SYNTH VOICE + ADSR/FILTER + DUAL OLED SCOPE -->
+      <section class="synth-rack-row">
+        <div class="module-box">
+          <div class="module-head">
+            <span class="module-title">01 // Oscillator &amp; FM Engine</span>
+            <span id="patch-cat-badge" class="mono" style="font-size:10px;color:var(--terracotta);font-weight:700;">NEO-SOUL</span>
+          </div>
+          <div class="wave-pills" id="wave-pills">
+            <button class="wave-btn" data-wave="sine">SINE</button>
+            <button class="wave-btn active" data-wave="triangle">TRI</button>
+            <button class="wave-btn" data-wave="saw">SAW</button>
+            <button class="wave-btn" data-wave="square">SQR</button>
+          </div>
+          <div class="knobs-grid" id="knobs-osc"></div>
+        </div>
+
+        <div class="module-box">
+          <div class="module-head">
+            <span class="module-title">02 // Low-Pass Filter &amp; ADSR</span>
+            <span id="adsr-readout" class="mono" style="font-size:10px;color:var(--sage);font-weight:700;">LPF 2400Hz</span>
+          </div>
+          <svg id="adsr-svg" viewBox="0 0 280 54" style="width:100%;height:50px;background:var(--plate-recess);border-radius:6px;border:1px solid var(--border-plate);">
+            <path id="adsr-path" fill="rgba(21,128,61,0.18)" stroke="#15803D" stroke-width="2" d=""/>
+          </svg>
+          <div class="knobs-grid" id="knobs-env"></div>
+        </div>
+
+        <div class="module-box">
+          <div class="module-head">
+            <span class="module-title">03 // Dual Oscilloscope &amp; 48-Band FFT</span>
+            <span id="oled-note-badge" class="mono" style="font-size:10px;color:var(--brass);font-weight:700;">DSP C4 READY</span>
+          </div>
+          <div class="oled-screen">
+            <div class="oled-tag mono">WAVEFORM // LOG HARMONIC FFT</div>
+            <canvas id="oled-canvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROW 2: 16-STEP EUCLIDEAN POLYRHYTHM MATRIX -->
+      <section class="seq-panel">
+        <div class="module-head" style="margin-bottom:9px;">
+          <span class="module-title">04 // 16-Step Euclidean Polyrhythm Sequencer (Click Steps or Generate E(k, 16))</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="mono" style="font-size:11px;color:var(--ink-muted);">Swing <strong id="swing-label">18%</strong></span>
+            <input id="swing-slider" type="range" min="0" max="0.35" step="0.02" value="0.18" style="width:95px;accent-color:var(--terracotta);" />
+            <button id="clear-seq-btn" class="euc-btn mono">Clear Grid</button>
+          </div>
+        </div>
+        <div id="seq-grid" class="seq-grid"></div>
+      </section>
+
+      <!-- ROW 3: PLAYABLE 2-OCTAVE KEYBOARD + CHORD PADS -->
+      <section class="keys-row">
+        <div class="module-box">
+          <div class="module-head">
+            <span class="module-title">05 // Playable 2-Octave Polyphonic Keys (Z..M / Q..P or Click)</span>
+            <span id="active-note-label" class="mono" style="font-size:11px;color:var(--terracotta);font-weight:700;">Click any key or chord pad</span>
+          </div>
+          <div id="piano-bed" class="piano-bed"></div>
+        </div>
+
+        <div class="module-box">
+          <div class="module-head">
+            <span class="module-title">06 // Scale Chord Voicings</span>
+            <span id="root-note-badge" class="mono" style="font-size:10px;color:var(--sage);font-weight:700;">ROOT A3</span>
+          </div>
+          <div id="chords-grid" class="chords-grid"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast mono" role="status" aria-live="polite"></div>
+  <script type="module" src="/static/js/app.js"></script>
+</body>
+</html>

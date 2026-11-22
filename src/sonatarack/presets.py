@@ -1,0 +1,131 @@
+"""Curated factory synth patches and Euclidean polyrhythmic patterns."""
+
+from __future__ import annotations
+
+from typing import Any
+
+
+def factory_patches() -> list[dict[str, Any]]:
+    return [
+        {
+            "id": "walnut-keys",
+            "name": "Walnut Rhodes Keys",
+            "category": "Neo-Soul",
+            "waveform": "triangle",
+            "fm_ratio": 2.0,
+            "fm_index": 1.15,
+            "cutoff_hz": 2400.0,
+            "resonance": 0.2,
+            "attack_ms": 12.0,
+            "decay_ms": 380.0,
+            "sustain": 0.48,
+            "release_ms": 320.0,
+            "drive": 0.35,
+            "delay_mix": 0.24,
+            "delay_ms": 280.0,
+        },
+        {
+            "id": "anatolian-hijaz",
+            "name": "Anatolian Hijaz Pluck",
+            "category": "Modal FM",
+            "waveform": "saw",
+            "fm_ratio": 3.0,
+            "fm_index": 2.1,
+            "cutoff_hz": 3600.0,
+            "resonance": 0.38,
+            "attack_ms": 6.0,
+            "decay_ms": 240.0,
+            "sustain": 0.32,
+            "release_ms": 260.0,
+            "drive": 0.55,
+            "delay_mix": 0.32,
+            "delay_ms": 330.0,
+        },
+        {
+            "id": "sub-brass-bass",
+            "name": "Moog Sub Brass",
+            "category": "Bass",
+            "waveform": "saw",
+            "fm_ratio": 1.0,
+            "fm_index": 0.4,
+            "cutoff_hz": 980.0,
+            "resonance": 0.52,
+            "attack_ms": 8.0,
+            "decay_ms": 190.0,
+            "sustain": 0.65,
+            "release_ms": 140.0,
+            "drive": 0.9,
+            "delay_mix": 0.05,
+            "delay_ms": 180.0,
+        },
+        {
+            "id": "tape-pad-dream",
+            "name": "VHS Tape Pad",
+            "category": "Ambient",
+            "waveform": "sine",
+            "fm_ratio": 2.0,
+            "fm_index": 0.75,
+            "cutoff_hz": 1750.0,
+            "resonance": 0.18,
+            "attack_ms": 210.0,
+            "decay_ms": 500.0,
+            "sustain": 0.78,
+            "release_ms": 620.0,
+            "drive": 0.4,
+            "delay_mix": 0.38,
+            "delay_ms": 420.0,
+        },
+    ]
+
+
+def factory_patterns() -> list[dict[str, Any]]:
+    return [
+        {
+            "id": "neo-soul-groove",
+            "name": "Neo-Soul Swing 92",
+            "scale": "dorian",
+            "root_midi": 57,
+            "bpm": 92,
+            "swing": 0.18,
+            "tracks": {
+                "kick": [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+                "snare": [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+                "hat": [1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0],
+                "bass": [45, 0, 0, 45, 0, 0, 48, 0, 50, 0, 52, 0, 48, 0, 43, 0],
+                "pad": [57, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 60, 0],
+                "arp": [69, 0, 72, 0, 74, 0, 76, 0, 74, 0, 72, 0, 69, 0, 67, 0],
+            },
+        },
+        {
+            "id": "euclid-afro-5-16",
+            "name": "Euclid 5/16 Afro-Jazz",
+            "scale": "pentatonic_minor",
+            "root_midi": 60,
+            "bpm": 112,
+            "swing": 0.10,
+            "tracks": {
+                "kick": [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+                "snare": [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+                "hat": [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+                "bass": [36, 0, 0, 39, 0, 0, 41, 0, 0, 43, 0, 0, 46, 0, 43, 0],
+                "pad": [60, 0, 0, 0, 0, 0, 63, 0, 0, 0, 65, 0, 0, 0, 0, 0],
+                "arp": [72, 75, 0, 79, 0, 75, 77, 0, 79, 0, 72, 0, 75, 77, 0, 79],
+            },
+        },
+        {
+            "id": "anatolian-break",
+            "name": "Hijaz Dawn 106",
+            "scale": "hijaz",
+            "root_midi": 62,
+            "bpm": 106,
+            "swing": 0.08,
+            "tracks": {
+                "kick": [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+                "snare": [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+                "hat": [1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0],
+                "bass": [38, 0, 0, 39, 0, 0, 42, 0, 38, 0, 45, 0, 43, 0, 39, 0],
+                "pad": [62, 0, 0, 0, 0, 0, 63, 0, 0, 0, 66, 0, 0, 0, 0, 0],
+                "arp": [74, 0, 75, 78, 0, 79, 81, 0, 82, 0, 79, 78, 0, 75, 74, 0],
+            },
+        },
+    ]

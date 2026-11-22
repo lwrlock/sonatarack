@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sonatarack"
+version = "0.1.0"
+description = "Polyphonic WebAudio + Python DSP Synthesizer, Euclidean Sequencer & Preset Studio"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "numpy>=1.24.0",
+]
+
+[project.scripts]
+sonatarack = "sonatarack.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
