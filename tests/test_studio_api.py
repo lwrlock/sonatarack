@@ -69,7 +69,22 @@ def test_sonatarack_api_presets_euclidean_fft_and_wav_export(tmp_path: Path):
                 ) as r:
                     assert r.status == 200
                     assert r.headers["Content-Type"] == "audio/wav"
+                    assert r.headers.get("X-Content-Type-Options") == "nosniff"
+                    assert r.headers.get("X-Frame-Options") == "DENY"
                     wav_data = await r.read()
                     assert wav_data[:4] == b"RIFF"
+
+                # Reject unsafe IDs and oversized step arrays (DoS guard)
+                async with sess.post(
+                    f"{base}/api/patches",
+                    json={"id": "../<script>", "name": "Bad", "waveform": "sine"},
+                ) as r_bad_id:
+                    assert r_bad_id.status == 422
+
+                async with sess.post(
+                    f"{base}/api/patterns",
+                    json={"id": "pat-dos", "name": "DoS", "tracks": {"kick": [1] * 256}},
+                ) as r_bad_steps:
+                    assert r_bad_steps.status == 422
 
     asyncio.run(go())

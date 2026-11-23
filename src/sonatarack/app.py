@@ -5,10 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from .dsp import SynthPatch, compute_fft_spectrum, render_note, render_pattern_wav
 from .storage import StudioStore
@@ -16,18 +16,30 @@ from .theory import CHORDS, SCALES, build_chord, euclidean_rhythm, midi_to_name,
 
 
 class PatchUpsertReq(SynthPatch):
-    id: str = Field(min_length=1, max_length=64)
-    category: str = "Custom"
+    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    category: str = Field(default="Custom", max_length=32)
 
 
 class PatternUpsertReq(BaseModel):
-    id: str = Field(min_length=1, max_length=64)
+    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
     name: str = Field(min_length=1, max_length=80)
-    scale: str = "dorian"
+    scale: str = Field(default="dorian", max_length=32)
     root_midi: int = Field(default=60, ge=24, le=96)
     bpm: int = Field(default=105, ge=50, le=220)
     swing: float = Field(default=0.12, ge=0.0, le=0.4)
     tracks: dict[str, list[int]]
+
+    @field_validator("tracks")
+    @classmethod
+    def validate_tracks(cls, v: dict[str, list[int]]) -> dict[str, list[int]]:
+        if len(v) > 12:
+            raise ValueError("Too many sequencer tracks (max 12)")
+        for lane, steps in v.items():
+            if len(lane) > 32 or len(steps) > 64:
+                raise ValueError("Invalid track lane or step count exceeds 64")
+            if any(not isinstance(s, int) or s < 0 or s > 127 for s in steps):
+                raise ValueError("Step values must be integers in [0, 127]")
+        return v
 
 
 class DspPreviewReq(BaseModel):
@@ -51,6 +63,14 @@ def create_app(*, db_path: Path | str | None = None) -> FastAPI:
     store = StudioStore(db_path=db_path)
     app = FastAPI(title="SonataRack", version="0.1.0")
     app.state.store = store
+
+    @app.middleware("http")
+    async def security_headers(request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        return response
 
     sdir = _static_dir()
     if sdir.exists():
