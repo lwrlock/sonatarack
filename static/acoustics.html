@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EchoRoom // Aurora Acoustic Ray-Tracer &amp; Eigenmode Observatory</title>
+  <link rel="stylesheet" href="/static/acoustics/css/styles.css" />
+</head>
+<body>
+  <div class="aurora-field" aria-hidden="true">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+
+  <main class="observatory">
+    <header class="top-glass">
+      <div class="echo-brand">
+        <h1>ECHOROOM OBSERVATORY</h1>
+        <p>ARCHITECTURAL ACOUSTICS RAY-TRACER // EIGENMODE PRESSURE FIELD // EYRING &amp; SABINE RT60</p>
+      </div>
+
+      <div class="kpi-bar">
+        <div class="kpi-glass"><span>Volume</span><strong id="kpi-vol">0 m³</strong></div>
+        <div class="kpi-glass"><span>Eyring RT60</span><strong id="kpi-rt60">0.00 s</strong></div>
+        <div class="kpi-glass"><span>Schroeder</span><strong id="kpi-schroeder">0 Hz</strong></div>
+        <div class="kpi-glass"><span>Clarity C80</span><strong id="kpi-c80">0 dB</strong></div>
+        <div class="kpi-glass"><span>Bolt Ratio</span><strong id="kpi-bolt">OPTIMAL</strong></div>
+      </div>
+
+      <div class="preset-strip">
+        <a href="/" class="btn-aurora" style="text-decoration:none;display:inline-flex;align-items:center;">← Synth Studio</a>
+        <button class="btn-aurora" data-preset="mastering" type="button">Mastering Suite</button>
+        <button class="btn-aurora" data-preset="concert" type="button">Nordic Hall</button>
+        <button class="btn-aurora" data-preset="vocal" type="button">Vocal Booth</button>
+      </div>
+    </header>
+
+    <div class="obs-grid">
+      <!-- LEFT PANEL: GEOMETRY, MATERIALS & EIGENMODES -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <section class="glass-card">
+          <h2 class="card-title"><span>Room Geometry &amp; Acoustic Treatment</span><span id="ratio-label">L:W:H</span></h2>
+          <div class="ctrl-grid">
+            <label class="ctrl-field">Length <b id="val-len">7.4m</b>
+              <input type="range" id="in-len" min="3.0" max="16.0" step="0.2" value="7.4" />
+            </label>
+            <label class="ctrl-field">Width <b id="val-wid">5.3m</b>
+              <input type="range" id="in-wid" min="2.4" max="12.0" step="0.1" value="5.3" />
+            </label>
+            <label class="ctrl-field">Height <b id="val-hei">3.1m</b>
+              <input type="range" id="in-hei" min="2.2" max="6.0" step="0.1" value="3.1" />
+            </label>
+          </div>
+
+          <div class="ctrl-grid">
+            <label class="ctrl-field">Walls
+              <select id="sel-walls"></select>
+            </label>
+            <label class="ctrl-field">Ceiling
+              <select id="sel-ceil"></select>
+            </label>
+            <label class="ctrl-field">Floor
+              <select id="sel-floor"></select>
+            </label>
+          </div>
+
+          <div class="ctrl-grid">
+            <label class="ctrl-field">Ray Count <b id="val-rays">44</b>
+              <input type="range" id="in-rays" min="16" max="88" step="4" value="44" />
+            </label>
+            <label class="ctrl-field">Bounces <b id="val-bounces">4</b>
+              <input type="range" id="in-bounces" min="1" max="6" step="1" value="4" />
+            </label>
+            <label class="ctrl-field">Click Canvas Sets
+              <select id="sel-place-mode">
+                <option value="receiver">Listener Sweet Spot</option>
+                <option value="source">Monitor / Source</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="glass-card">
+          <h2 class="card-title"><span>Room Standing-Wave Eigenmodes</span><span id="active-mode-label">Mode (2,1)</span></h2>
+          <div style="max-height:270px;overflow-y:auto;">
+            <table class="mode-table">
+              <thead><tr><th>Mode (p,q,r)</th><th>Type</th><th>Freq (Hz)</th><th>Status</th></tr></thead>
+              <tbody id="modes-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT PANEL: 2D RAY-TRACER + RT60 + RIR -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <section class="glass-card">
+          <h2 class="card-title">
+            <span>2D Specular Acoustic Ray-Tracer &amp; Standing-Wave Pressure Contour</span>
+            <span id="ray-hit-badge" style="color:var(--aurora-mint)">Sweet-Spot Reflections</span>
+          </h2>
+          <canvas id="ray-canvas" class="ray-canvas" width="900" height="360"></canvas>
+        </section>
+
+        <div class="bottom-charts">
+          <section class="glass-card">
+            <h2 class="card-title"><span>Sabine vs Eyring RT60 Decay (s)</span><span id="rt60-status-badge">—</span></h2>
+            <canvas id="rt60-canvas" class="sub-canvas" width="440" height="175"></canvas>
+          </section>
+
+          <section class="glass-card">
+            <h2 class="card-title"><span>Room Impulse Arrival Energy (0–160ms)</span><span>Early &lt; 80ms vs Late</span></h2>
+            <canvas id="rir-canvas" class="sub-canvas" width="440" height="175"></canvas>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/static/acoustics/js/app.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # SonataRack
 
-> **Polyphonic FM + Additive/Subtractive Hardware Synth & Euclidean Polyrhythm Studio** built with FastAPI, NumPy/SciPy DSP, Web Audio API, and an interactive walnut-and-cream modular rack UI (with one-click Late-Night Jazz Vinyl Dark mode).
+> **Unified Polyphonic FM + Additive/Subtractive Hardware Synth, Euclidean Polyrhythm Studio & Spatial Room Acoustics Ray-Tracer** built with FastAPI, NumPy/SciPy DSP, Web Audio API, and dual Walnut-Cream / Nordic-Aurora interfaces *(integrates the EchoRoom acoustics engine under `/acoustics`)*.
 
 ## Studio Visuals
 
@@ -9,6 +9,9 @@
 
 ### 2. Late-Night Jazz Vinyl Dark Theme (`Anatolian Hijaz Pluck` + `Maj9 Lush`)
 ![SonataRack Vinyl Dark Studio](docs/screenshots/02_vinyl_dark.png)
+
+### 3. Spatial Room Acoustics Observatory (`/acoustics`)
+![SonataRack Room Acoustics Observatory](docs/screenshots/03_aurora_acoustics.png)
 
 ## Architecture & Core Capabilities
 

@@ -87,4 +87,19 @@ def test_sonatarack_api_presets_euclidean_fft_and_wav_export(tmp_path: Path):
                 ) as r_bad_steps:
                     assert r_bad_steps.status == 422
 
+                # Integrated Room Acoustics Observatory endpoints
+                async with sess.get(f"{base}/acoustics") as r_page:
+                    assert r_page.status == 200
+                async with sess.get(f"{base}/api/acoustics/materials") as r_mats:
+                    assert r_mats.status == 200
+                    assert len((await r_mats.json())["materials"]) >= 5
+                async with sess.post(
+                    f"{base}/api/acoustics/simulate",
+                    json={"length": 7.4, "width": 5.3, "height": 3.1},
+                ) as r_sim:
+                    assert r_sim.status == 200
+                    sim_data = await r_sim.json()
+                    assert len(sim_data["rt60"]["bands"]) == 6
+                    assert len(sim_data["raytrace"]["rays"]) == 44
+
     asyncio.run(go())

@@ -10,6 +10,13 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
+from .acoustics import (
+    MATERIALS,
+    compute_mode_pressure_grid,
+    compute_room_modes,
+    compute_rt60_spectrum,
+    trace_room_rays,
+)
 from .dsp import SynthPatch, compute_fft_spectrum, render_note, render_pattern_wav
 from .storage import StudioStore
 from .theory import CHORDS, SCALES, build_chord, euclidean_rhythm, midi_to_name, scale_notes
@@ -53,6 +60,23 @@ class WavRenderReq(BaseModel):
     patch: SynthPatch | None = None
     pattern: dict[str, Any] | None = None
     bars: int = Field(default=2, ge=1, le=8)
+
+
+class AcousticsSimReq(BaseModel):
+    length: float = Field(default=7.4, ge=2.5, le=20.0)
+    width: float = Field(default=5.3, ge=2.0, le=16.0)
+    height: float = Field(default=3.1, ge=2.0, le=8.0)
+    walls: str = Field(default="oak_parquet", max_length=64)
+    ceiling: str = Field(default="acoustic_foam", max_length=64)
+    floor: str = Field(default="heavy_velvet", max_length=64)
+    source_x: float = Field(default=1.6, ge=0.2)
+    source_y: float = Field(default=2.65, ge=0.2)
+    receiver_x: float = Field(default=5.6, ge=0.2)
+    receiver_y: float = Field(default=2.65, ge=0.2)
+    num_rays: int = Field(default=44, ge=12, le=96)
+    max_bounces: int = Field(default=4, ge=1, le=7)
+    mode_p: int = Field(default=2, ge=0, le=6)
+    mode_q: int = Field(default=1, ge=0, le=6)
 
 
 def _static_dir() -> Path:
@@ -157,5 +181,47 @@ def create_app(*, db_path: Path | str | None = None) -> FastAPI:
             media_type="audio/wav",
             headers={"Content-Disposition": 'attachment; filename="sonatarack-loop.wav"'},
         )
+
+    @app.get("/acoustics")
+    async def acoustics_page() -> Response:
+        page = sdir / "acoustics.html"
+        if page.exists():
+            return FileResponse(page)
+        return JSONResponse({"service": "SonataRack Acoustics", "status": "ok"})
+
+    @app.get("/api/acoustics/materials")
+    @app.get("/api/materials")
+    async def acoustics_materials() -> dict[str, Any]:
+        return {
+            "materials": [
+                {"id": k, "label": v["label"], "alpha": v["alpha"]}
+                for k, v in MATERIALS.items()
+            ]
+        }
+
+    @app.post("/api/acoustics/simulate")
+    @app.post("/api/simulate")
+    async def acoustics_simulate(req: AcousticsSimReq) -> dict[str, Any]:
+        dims = (req.length, req.width, req.height)
+        rt60 = compute_rt60_spectrum(dims, walls=req.walls, ceiling=req.ceiling, floor=req.floor)
+        modes = compute_room_modes(dims, max_freq_hz=230.0, limit=20)
+        pressure_grid = compute_mode_pressure_grid(req.length, req.width, p=req.mode_p, q=req.mode_q, nx=36, ny=24)
+        wall_alpha = MATERIALS.get(req.walls, MATERIALS["oak_parquet"])["alpha"][2]
+        raytrace = trace_room_rays(
+            length=req.length,
+            width=req.width,
+            source=(req.source_x, req.source_y),
+            receiver=(req.receiver_x, req.receiver_y),
+            num_rays=req.num_rays,
+            max_bounces=req.max_bounces,
+            wall_absorption=wall_alpha,
+        )
+        return {
+            "dims": {"length": req.length, "width": req.width, "height": req.height},
+            "rt60": rt60,
+            "modes": modes,
+            "pressure_grid": pressure_grid,
+            "raytrace": raytrace,
+        }
 
     return app
